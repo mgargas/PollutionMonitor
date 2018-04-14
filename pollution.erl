@@ -18,7 +18,7 @@
   type_station_to_meas = dict:new()}).
 -record(stations, {all = sets:new(), coord_to_elem = dict:new(), name_to_elem = dict:new()}).
 -record(monitor, {meas = #measurements{}, stats = #stations{}}).
-%% API
+
 
 createMonitor() -> #monitor{}.
 
@@ -41,7 +41,7 @@ addValue(StationInfo, Date, Type, Value, Monitor) ->
   NewMeas = Meas#measurements{
     all = sets:add_element(Measurement, Meas#measurements.all),
     type_date_station_to_meas = dict:store({Type, Date, Station}, Measurement, Meas#measurements.type_date_station_to_meas),
-    type_date_to_meas = dict:append({Type, Date}, Measurement, Meas#measurements.type_date_to_meas),
+    type_date_to_meas = dict:append({Type, element(1, Date)}, Measurement, Meas#measurements.type_date_to_meas),
     type_station_to_meas = dict:append({Type, Station}, Measurement, Meas#measurements.type_station_to_meas)
   },
   Monitor#monitor{meas = NewMeas}.
@@ -51,7 +51,7 @@ removeValue(StationInfo, Date, Type, Monitor) ->
   Station = getStation(StationInfo, Monitor),
   Meas = (Monitor#monitor.meas),
   Measurement = dict:fetch({Type, Date, Station}, Meas#measurements.type_date_station_to_meas),
-  {Old1, TypeDateToMeas} = dict:take({Type, Date}, Meas#measurements.type_date_to_meas),
+  {Old1, TypeDateToMeas} = dict:take({Type, element(1, Date)}, Meas#measurements.type_date_to_meas),
   {Old2, TypeStationToMeas} = dict:take({Type, Station}, Meas#measurements.type_station_to_meas),
   NewMeas = Meas#measurements{
     all = sets:del_element(Measurement, Meas#measurements.all),
