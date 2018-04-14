@@ -85,7 +85,6 @@ getAreaMean(StationInfo, Type, Radius, Monitor) ->
   average(lists:flatten(dict:fold(fun(_, V, AccIn) -> [V|AccIn] end, [], NewDict))).
 
 
-
 average(L) -> average(L, 0, 0).
 average([{_, _, _, V}|T], Length, Sum) -> average(T, Length + 1, Sum + V);
 average([], Length, Sum) -> Sum/Length.
@@ -94,26 +93,5 @@ average([], Length, Sum) -> Sum/Length.
 getStation({X,Y}, Monitor) -> dict:fetch({X,Y}, (Monitor#monitor.stats)#stations.coord_to_elem);
 getStation(Name, Monitor) -> dict:fetch(Name, (Monitor#monitor.stats)#stations.name_to_elem).
 
-
-
-
-
-testAdd()->
-  M = pollution:createMonitor(),
-  M0 = pollution:addStation("Wroclawska", {1,8}, M),
-  M1 = pollution:addStation("Poznanska", {2,8}, M0),
-  M2 = pollution:addValue("Poznanska", "13 kwietnia", "PM10", 130, M1),
-  M3 = pollution:addValue("Wroclawska", "14 kwietnia", "PM10", 99, M2),
-  pollution:addValue("Poznanska", "14 kwietnia", "PM10", 99, M3).
-
-
-testRemove()->
-  M = pollution:createMonitor(),
-  M0 = pollution:addStation("Wroclawska", {1,8}, M),
-  M1 = pollution:addStation("Poznanska", {2,8}, M0),
-  M2 = pollution:addValue("Poznanska", "13 kwietnia", "PM10", 130, M1),
-  M3 = pollution:addValue("Poznanska", "14 kwietnia", "PM10", 99, M2),
-  M4 = pollution:addValue("Wroclawska", "14 kwietnia", "PM10", 100, M3),
-  pollution:removeValue("Poznanska", "14 kwietnia", "PM10", M4).
 
 
