@@ -47,11 +47,42 @@ add_station_test() ->
     (Current#monitor.stats)#stations.coord_to_elem) =:= {"Neverland", {14, 10}}).
 
 
+add_station_the_same_test() ->
+  Monitor = pollution:createMonitor(),
+  MonitorWithS = pollution:addStation("Neverland", {14, 10}, Monitor),
+  Current = pollution:addStation("Central Perk", {14, 10}, MonitorWithS),
+  ?assert(sets:is_element({"Neverland", {14, 10}}, (Current#monitor.stats)#stations.all)),
+  ?assert(dict:fetch("Neverland",
+    (Current#monitor.stats)#stations.name_to_elem) =:= {"Neverland", {14, 10}}),
+  ?assert(dict:fetch({14, 10},
+    (Current#monitor.stats)#stations.coord_to_elem) =:= {"Neverland", {14, 10}}).
+
+
 add_value_test() ->
   D = calendar:local_time(),
   Monitor = pollution:createMonitor(),
   MonitorWithS = pollution:addStation("Neverland", {14, 10}, Monitor),
   Current = pollution:addValue({14, 10}, D, "X", 12, MonitorWithS),
+  ?assert(sets:is_element({{"Neverland", {14, 10}}, D, "X", 12}, (Current#monitor.meas)#measurements.all)),
+  ?assert(element(2, dict:find({"X", element(1,D)},
+    (Current#monitor.meas)#measurements.type_date_to_meas)) =:= [{{"Neverland", {14, 10}}, D, "X", 12}]).
+
+
+add_value_the_same_test() ->
+  D = calendar:local_time(),
+  Monitor = pollution:createMonitor(),
+  MonitorWithS = pollution:addStation("Neverland", {14, 10}, Monitor),
+  WithOneValue = pollution:addValue({14, 10}, D, "X", 12, MonitorWithS),
+  WithTwoValues = pollution:addValue({14, 10}, D, "X", 12, WithOneValue),
+  ?assert(sets:is_element({{"Neverland", {14, 10}}, D, "X", 12}, (WithTwoValues#monitor.meas)#measurements.all)),
+  ?assert(element(2, dict:find({"X", element(1,D)},
+    (WithTwoValues#monitor.meas)#measurements.type_date_to_meas)) =:= [{{"Neverland", {14, 10}}, D, "X", 12}]).
+
+
+add_value_without_station_test() ->
+  D = calendar:local_time(),
+  Monitor = pollution:createMonitor(),
+  Current = pollution:addValue({14, 10}, D, "X", 12, Monitor),
   ?assert(sets:is_element({{"Neverland", {14, 10}}, D, "X", 12}, (Current#monitor.meas)#measurements.all)),
   ?assert(element(2, dict:find({"X", element(1,D)},
     (Current#monitor.meas)#measurements.type_date_to_meas)) =:= [{{"Neverland", {14, 10}}, D, "X", 12}]).
