@@ -9,13 +9,7 @@
 -module(pollution_tests).
 -author("Prezes").
 -include_lib("eunit/include/eunit.hrl").
-
--record(measurements, {all = sets:new(),
-  type_date_station_to_meas = dict:new(),
-  type_date_to_meas = dict:new(),
-  type_station_to_meas = dict:new()}).
--record(stations, {all = sets:new(), coord_to_elem = dict:new(), name_to_elem = dict:new()}).
--record(monitor, {meas = #measurements{}, stats = #stations{}}).
+-include("pollution_records.hrl").
 
 
 create_monitor_test() ->
