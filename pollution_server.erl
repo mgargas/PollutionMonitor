@@ -16,7 +16,7 @@
   getAreaMean/3, getDailyMean/2, getStationMean/2, removeValue/3]).
 -include("pollution_records.hrl").
 
-start() -> register(pollutionServer, spawn_link(?MODULE, init, [])).
+start() -> register(pollutionServer, spawn(?MODULE, init, [])).
 
 
 stop() -> pollutionServer ! stop.
